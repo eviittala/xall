@@ -78,14 +78,14 @@ class TestXall(unittest.TestCase):
         mockZipfile.ZipFile.assert_called_with("./" + file)
         #TODO Eero: xall.extractall.assert_called_with("./" + "test")
 
-    @patch("os.system")
+    @patch("os.remove")
     @patch("xall.extractFile")
-    def testXfile(self, extractFile, osSystem):
+    def testXfile(self, extractFile, osRemove):
         folder = "."
         file = "test.zip"
         xall.xfile(folder, file, True)
         extractFile.assert_called_with(folder, file)
-        osSystem.assert_called_with("rm" + " " + folder + "/" + file)
+        osRemove.assert_called_with(folder + "/" + file)
 
     @patch("os.scandir")
     @patch("xall.isCompressedFile")
@@ -107,5 +107,13 @@ class TestXall(unittest.TestCase):
         osScandir.assert_called_with(folder)
         self.assertEqual(xall.paths[0], folder + "/" +"myFolder")
         self.assertEqual(len(xall.paths), 1)
+
+    @patch("xall.searchCompressedFiles")
+    def testGoThroughAllPaths(self, searchCompressedFiles):
+        folder = "testFolder"
+        xall.paths.append(folder)
+        xall.goThroughAllPaths()
+        searchCompressedFiles.assert_called_with(folder)
+        self.assertEqual(len(xall.paths), 0)
 
 unittest.main()

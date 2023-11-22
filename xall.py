@@ -35,7 +35,7 @@ def xfile(folder, filename, remove_file = False):
     extractFile(folder, filename)
     paths.append(folder + "/" + head)
     if remove_file:
-        os.system("rm" + " " + folder + "/" + filename)
+        os.remove(folder + "/" + filename)
 
 def searchCompressedFiles(folder):
     with os.scandir(folder) as it:
@@ -47,15 +47,20 @@ def searchCompressedFiles(folder):
                 elif entry.is_dir():
                     paths.append(folder + "/" + entry.name)
 
+def goThroughAllPaths():
+    while len(paths) > 0:
+        path = paths[0]
+        paths.pop(0)
+        searchCompressedFiles(path)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog=sys.argv[0], description='Extracts all compressed files')
     parser.add_argument('filename', help='Filename to compress')
-    parser.add_argument('-v', '--version', help='Version of this file', action='version', version='%(prog)s 1.0')
+    parser.add_argument('-v', '--version', help='Version of this file', action='version', version='%(prog)s 1.1')
     args = parser.parse_args()
     if isCompressedFile(args.filename):
         xfile(".", args.filename)
-        while len(paths) > 0:
-            path = paths[0]
-            paths.pop(0)
-            searchCompressedFiles(path)
+        goThroughAllPaths()
+    else:
+        print("Filename: {0} is not compressed file.".format(args.filename))
 

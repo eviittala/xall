@@ -19,23 +19,30 @@ def getFileHead(filename):
     return m[0]
 
 def extractFile(folder, filename):
+    print("{0} ... ".format(filename), end='')
     head = folder + "/" + getFileHead(filename)
     file = folder + "/" + filename
-    if tarfile.is_tarfile(file):
-        os.mkdir(head)
-        tar = tarfile.open(file)
-        tar.extractall(head)
-        tar.close()
-    elif zipfile.is_zipfile(file):
-        with zipfile.ZipFile(file) as myzip:
-            myzip.extractall(head)
+    try:
+        if tarfile.is_tarfile(file):
+            os.mkdir(head)
+            tar = tarfile.open(file)
+            tar.extractall(head)
+            tar.close()
+        elif zipfile.is_zipfile(file):
+            with zipfile.ZipFile(file) as myzip:
+                myzip.extractall(head)
+    except:
+        print("nok")
+        return False
+    print("ok")
+    return True
 
 def xfile(folder, filename, remove_file = False):
     head = getFileHead(filename)
-    extractFile(folder, filename)
-    paths.append(folder + "/" + head)
-    if remove_file:
-        os.remove(folder + "/" + filename)
+    if extractFile(folder, filename):
+        paths.append(folder + "/" + head)
+        if remove_file:
+            os.remove(folder + "/" + filename)
 
 def searchCompressedFiles(folder):
     with os.scandir(folder) as it:

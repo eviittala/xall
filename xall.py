@@ -52,7 +52,7 @@ def extractFile(folder, filename):
                 pass
             with gzip.open(file, 'rb') as f_in:
                 # TODO filenamewithout extension
-                with open(head + "/" + getFileHead(filename), "wb") as f_out:
+                with open(head + "/" + filename[0:-3], "wb") as f_out:
                     shutil.copyfileobj(f_in, f_out)
     except:
         print("nok")

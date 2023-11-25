@@ -9,13 +9,20 @@ import gzip
 
 paths = []
 
-def is_gzipfile(filename):
+def isGzipFile(filename):
     tail = getFileTail(filename)
-    return tail == "gz"
+    if tail == "gz":
+        with gzip.open(filename, 'rb') as f_in:
+            try:
+                f_in.read(1)
+                return True
+            except:
+                pass
+    return False
 
 def isCompressedFile(filename):
     try:
-        return tarfile.is_tarfile(filename) or zipfile.is_zipfile(filename) or is_gzipfile(filename)
+        return tarfile.is_tarfile(filename) or zipfile.is_zipfile(filename) or isGzipFile(filename)
     except:
         return False
 
@@ -30,34 +37,36 @@ def getFileTail(filename):
     return m[-1]
 
 def extractFile(folder, filename):
-    print("{0} ... ".format(filename), end='')
-    head = folder + "/" + getFileHead(filename)
+    if __name__ == "__main__":
+        print("{0} ... ".format(filename), end='')
+    path = folder + "/" + getFileHead(filename)
     file = folder + "/" + filename
     try:
         if tarfile.is_tarfile(file):
             try:
-                os.mkdir(head)
+                os.mkdir(path)
             except FileExistsError:
                 pass
             tar = tarfile.open(file)
-            tar.extractall(head)
+            tar.extractall(path)
             tar.close()
         elif zipfile.is_zipfile(file):
             with zipfile.ZipFile(file) as myzip:
-                myzip.extractall(head)
-        elif is_gzipfile(file):
+                myzip.extractall(path)
+        elif isGzipFile(file):
             try:
-                os.mkdir(head)
+                os.mkdir(path)
             except FileExistsError:
                 pass
             with gzip.open(file, 'rb') as f_in:
-                # TODO filenamewithout extension
-                with open(head + "/" + filename[0:-3], "wb") as f_out:
+                with open(path + "/" + filename[0:-3], "wb") as f_out:
                     shutil.copyfileobj(f_in, f_out)
     except:
-        print("nok")
+        if __name__ == "__main__":
+            print("nok")
         return False
-    print("ok")
+    if __name__ == "__main__":
+        print("ok")
     return True
 
 def xfile(folder, filename, remove_file = False):

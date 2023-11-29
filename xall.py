@@ -21,8 +21,9 @@ def isGzipFile(filename):
     return False
 
 def isCompressedFile(filename):
+    notCompressedFiles = ["bin", "log", "txt"]
     try:
-        return getFileTail(filename) != "bin" and (tarfile.is_tarfile(filename) or zipfile.is_zipfile(filename) or isGzipFile(filename))
+        return getFileTail(filename) not in notCompressedFiles and (tarfile.is_tarfile(filename) or zipfile.is_zipfile(filename) or isGzipFile(filename))
     except:
         return False
 
@@ -101,7 +102,7 @@ def goThroughAllPaths():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog=sys.argv[0], description='Extracts all compressed files')
     parser.add_argument('filename', help='Filename to compress')
-    parser.add_argument('-v', '--version', help='Version of this file', action='version', version='%(prog)s 1.4')
+    parser.add_argument('-v', '--version', help='Version of this file', action='version', version='%(prog)s 1.5')
     args = parser.parse_args()
     if isCompressedFile(args.filename):
         xfile(".", args.filename)

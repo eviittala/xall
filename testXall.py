@@ -91,6 +91,23 @@ class TestXall(unittest.TestCase):
         mockTarfile.assert_called_with("test.zip")
         mockZipfile.assert_called_with("test.zip")
 
+    @patch("xall.zipfile.is_zipfile")
+    @patch("xall.tarfile.is_tarfile")
+    @patch("xall.isGzipFile")
+    def testIsCompressedFileGzip(self, mockGzipfile, mockTarfile, mockZipfile):
+        mockTarfile.return_value = False
+        mockZipfile.return_value = False
+        mockGzipfile.return_value = True
+        self.assertTrue(xall.isCompressedFile("test.gz"))
+        mockTarfile.assert_called_with("test.gz")
+        mockZipfile.assert_called_with("test.gz")
+        mockGzipfile.assert_called_with("test.gz")
+
+    def testIsCompressedWithNotCompressedFiles(self):
+        self.assertFalse(xall.isCompressedFile("test.bin"))
+        self.assertFalse(xall.isCompressedFile("test.log"))
+        self.assertFalse(xall.isCompressedFile("test.txt"))
+
     def testGetFileHead(self):
         self.assertEqual("file", xall.getFileHead("file.zip"))
         self.assertEqual("file", xall.getFileHead("file.tar.gz"))

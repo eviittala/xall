@@ -22,7 +22,7 @@ def isGzipFile(filename):
 
 def isCompressedFile(filename):
     try:
-        return tarfile.is_tarfile(filename) or zipfile.is_zipfile(filename) or isGzipFile(filename)
+        return getFileTail(filename) != "bin" and (tarfile.is_tarfile(filename) or zipfile.is_zipfile(filename) or isGzipFile(filename))
     except:
         return False
 
@@ -43,6 +43,8 @@ def extractFile(folder, filename):
     file = folder + "/" + filename
     try:
         if tarfile.is_tarfile(file):
+            if __name__ == "__main__":
+                print("tarfile: ", end='')
             try:
                 os.mkdir(path)
             except FileExistsError:
@@ -51,9 +53,13 @@ def extractFile(folder, filename):
             tar.extractall(path)
             tar.close()
         elif zipfile.is_zipfile(file):
+            if __name__ == "__main__":
+                print("zipfile: ", end='')
             with zipfile.ZipFile(file) as myzip:
                 myzip.extractall(path)
         elif isGzipFile(file):
+            if __name__ == "__main__":
+                print("gzipfile: ", end='')
             try:
                 os.mkdir(path)
             except FileExistsError:
@@ -95,7 +101,7 @@ def goThroughAllPaths():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog=sys.argv[0], description='Extracts all compressed files')
     parser.add_argument('filename', help='Filename to compress')
-    parser.add_argument('-v', '--version', help='Version of this file', action='version', version='%(prog)s 1.3')
+    parser.add_argument('-v', '--version', help='Version of this file', action='version', version='%(prog)s 1.4')
     args = parser.parse_args()
     if isCompressedFile(args.filename):
         xfile(".", args.filename)

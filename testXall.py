@@ -3,7 +3,6 @@ from unittest.mock import patch, MagicMock, mock_open
 import xall
 import os
 
-#https://stackoverflow.com/questions/65830675/is-it-possible-to-mock-os-scandir-and-its-attributes
 class DirFileEntry:
     def __init__(self, filename, is_file):
         self.name = filename

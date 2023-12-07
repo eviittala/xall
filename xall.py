@@ -84,14 +84,17 @@ def xfile(folder, filename, remove_file = False):
             os.remove(folder + "/" + filename)
 
 def searchCompressedFiles(folder):
-    with os.scandir(folder) as it:
-        for entry in it:
-            if not entry.name.startswith('.'):
-                if entry.is_file():
-                    if isCompressedFile(folder + "/" + entry.name):
-                        xfile(folder, entry.name, remove_file=True)
-                elif entry.is_dir():
-                    paths.append(folder + "/" + entry.name)
+    try:
+        with os.scandir(folder) as it:
+            for entry in it:
+                if not entry.name.startswith('.'):
+                    if entry.is_file():
+                        if isCompressedFile(folder + "/" + entry.name):
+                            xfile(folder, entry.name, remove_file=True)
+                    elif entry.is_dir():
+                        paths.append(folder + "/" + entry.name)
+    except FileNotFoundError:
+        pass
 
 def goThroughAllPaths():
     while len(paths) > 0:
